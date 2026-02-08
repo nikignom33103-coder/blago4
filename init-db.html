@@ -2,47 +2,95 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Инициализация администратора - Благо дарить!</title>
+    <title>Инициализация "Благо дарить!" v1.4.0</title>
     <style>
         body { 
-            font-family: Arial, sans-serif;
-            max-width: 600px;
-            margin: 50px auto;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            max-width: 750px;
+            margin: 0;
             padding: 20px;
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .container { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
-        h1 { color: #065f46; margin-bottom: 10px; }
-        .subtitle { color: #6b7280; margin-bottom: 20px; }
-        button { padding: 12px 24px; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; margin: 5px; font-weight: 600; font-size: 14px; }
-        button:hover { background: #059669; }
+        .container { 
+            background: white; 
+            padding: 50px; 
+            border-radius: 16px; 
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3); 
+        }
+        h1 { color: #065f46; margin-bottom: 15px; font-size: 32px; }
+        .subtitle { color: #6b7280; margin-bottom: 30px; font-size: 15px; }
+        .info-box {
+            background: #bfdbfe;
+            color: #1e40af;
+            border: 2px solid #93c5fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        ul { margin: 15px 0; padding-left: 25px; }
+        li { margin: 8px 0; line-height: 1.5; }
+        button { 
+            padding: 14px 28px; 
+            background: #10b981; 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            margin: 8px 10px 8px 0; 
+            font-weight: 600; 
+            font-size: 15px; 
+            transition: all 0.3s;
+        }
+        button:hover { background: #059669; transform: translateY(-2px); }
         button.danger { background: #dc2626; }
         button.danger:hover { background: #b91c1c; }
-        .status { margin: 20px 0; padding: 15px; border-radius: 6px; }
-        .success { background: #c6f6d5; color: #22543d; border: 1px solid #86efac; }
-        .error { background: #fed7d7; color: #c53030; border: 1px solid #fca5a5; }
-        .info { background: #bfdbfe; color: #1e40af; border: 1px solid #93c5fd; }
-        a { color: #10b981; text-decoration: none; }
+        .status { margin: 30px 0; padding: 20px; border-radius: 8px; font-size: 14px; }
+        .status.success { background: #c6f6d5; color: #22543d; border: 2px solid #6ee7b7; }
+        .status.error { background: #fed7d7; color: #c53030; border: 2px solid #fc8181; }
+        .status.warning { background: #fef3c7; color: #92400e; border: 2px solid #fcd34d; }
+        .status.info { background: #bfdbfe; color: #1e40af; border: 2px solid #93c5fd; }
+        a { color: #10b981; text-decoration: none; font-weight: 600; }
         a:hover { text-decoration: underline; }
+        .credentials {
+            background: #f3f4f6; padding: 12px; border-radius: 6px; 
+            font-family: 'Courier New', monospace; font-size: 13px; margin: 8px 0;
+        }
+        code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🟢 ИНИЦИАЛИЗАЦИЯ "Благо дарить!" v1.4.0</h1>
-        <p class="subtitle">Создание учетной записи администратора</p>
+        <h1>🟢 ИНИЦИАЛИЗАЦИЯ СИСТЕМЫ</h1>
+        <p class="subtitle">"Благо дарить!" v1.4.0 - Профессиональная система управления</p>
         
-        <div class="status info">
-            <strong>ℹ️ Инструкция:</strong> Нажмите кнопку ниже чтобы создать учетную запись администратора. После этого вы сможете входить в систему и добавлять других пользователей.
+        <div class="info-box">
+            <strong>✅ Выберите вариант инициализации:</strong>
+            <ul>
+                <li><strong>Вариант 1:</strong> Создать только администратора (Никитин/1166) - пустая система</li>
+                <li><strong>Вариант 2:</strong> Создать администратора + полные демо-данные - система с примерами</li>
+            </ul>
         </div>
-        
-        <button onclick="initOnlyAdmin()">✅ СОЗДАТЬ АДМИНИСТРАТОРА</button>
-        <button class="danger" onclick="clearData()">🗑️ ОЧИСТИТЬ БД</button>
-        
+
+        <div>
+            <button onclick="initOnlyAdmin()">👤 ВАРИАНТ 1: Только администратор</button><br>
+            <button onclick="initWithDemo()">📊 ВАРИАНТ 2: Администратор + Демо-данные</button><br>
+            <button class="danger" onclick="clearData()">🗑️ УДАЛИТЬ ВСЕ ДАННЫЕ (СБРОС)</button>
+        </div>
+
         <div id="status"></div>
+
+        <hr style="border: none; border-top: 2px solid #e5e7eb; margin: 40px 0;">
+
+        <p style="font-size: 13px; color: #666; text-align: center; margin: 0;">
+            📝 После инициализации перейдите к приложению:<br>
+            <a href="/blago4/">👉 Открыть "Благо дарить!" v1.4.0</a>
+        </p>
     </div>
 
-    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
 
@@ -58,111 +106,115 @@
         };
 
         let db = null;
-        
-        // ===== ИНИЦИАЛИЗАЦИЯ FIREBASE =====
         try {
             firebase.initializeApp(firebaseConfig);
             db = firebase.database();
-            console.log('✅ Firebase инициализирован');
+            console.log('✅ Firebase подключена');
         } catch (err) {
-            console.error('❌ Ошибка Firebase:', err);
+            console.error('❌ Firebase error:', err);
         }
 
-        function showStatus(msg, type) {
-            const statusDiv = document.getElementById('status');
-            statusDiv.innerHTML = `<div class="status ${type}">${msg}</div>`;
+        function show(msg, type) {
+            const el = document.getElementById('status');
+            el.innerHTML = `<div class="status ${type}">${msg}</div>`;
         }
 
+        // ВАРИАНТ 1: ТОЛЬКО АДМИНИСТРАТОР
         async function initOnlyAdmin() {
-            if (!db) {
-                showStatus('❌ БД не инициализирована. Перезагрузите страницу и попробуйте снова.', 'error');
-                return;
-            }
-            
-            showStatus('⏳ Создание администратора...', 'info');
+            if (!db) { show('❌ Firebase не инициализирована. Перезагрузите страницу.', 'error'); return; }
+            show('⏳ Создание администратора...', 'info');
             
             try {
-                // Проверяем, есть ли уже пользователи
-                const usersSnap = await db.ref('users').once('value');
-                const existingUsers = usersSnap.val();
-
-                if (existingUsers && Object.keys(existingUsers).length > 0) {
-                    showStatus('⚠️ Администратор уже создан! Пользователи уже существуют в системе.', 'error');
-                    const users = existingUsers;
-                    let userList = '<strong>Текущие пользователи:</strong><br>';
-                    for (let uid in users) {
-                        userList += `• ${users[uid].name} (${users[uid].role})<br>`;
-                    }
-                    showStatus(userList, 'info');
+                const snap = await db.ref('users').once('value');
+                if (snap.val() && Object.keys(snap.val()).length > 0) {
+                    show('⚠️ Система уже инициализирована! Если нужно начать заново, нажмите УДАЛИТЬ ВСЕ ДАННЫЕ.', 'warning');
                     return;
                 }
 
-                // Создаем только администратора
-                const admin = {
-                    '1769519370597': {
-                        id: 1769519370597,
-                        name: 'Никитин',
-                        email: 'admin@blago.ru',
-                        password: '1166',
-                        role: 'admin',
-                        active: true,
-                        createdDate: new Date().toLocaleDateString('ru-RU')
-                    }
-                };
+                const admin = { '1769519370597': {
+                    id: 1769519370597, name: 'Никитин', email: 'admin@blago.ru',
+                    password: '1166', role: 'admin', active: true,
+                    createdDate: new Date().toLocaleDateString('ru-RU')
+                }};
 
                 await db.ref('users').set(admin);
-                
-                showStatus(`
-                    ✅ <strong>АДМИНИСТРАТОР СОЗДАН!</strong><br><br>
-                    <strong>Учетные данные:</strong><br>
-                    👤 Имя: <strong>Никитин</strong><br>
-                    🔐 Пароль: <strong>1166</strong><br><br>
-                    <strong>Данные хранятся в Firebase:</strong><br>
-                    📍 https://blago-a6270-default-rtdb.firebaseio.com<br><br>
-                    ✅ Готово! Теперь вы можете:<br>
-                    1️⃣ Войти в систему с этими данными<br>
-                    2️⃣ Добавлять новых пользователей через админ-панель<br>
-                    3️⃣ Использовать все 6 модулей системы<br><br>
-                    👉 <a href="/blago4/">Перейти в приложение</a>
-                `, 'success');
-
+                show(`<strong>✅ АДМИНИСТРАТОР СОЗДАН!</strong><br><div class="credentials">👤 Имя: <code>Никитин</code><br>🔐 Пароль: <code>1166</code></div><p style="margin: 15px 0 0 0;"><strong>✅ Готово!</strong> Перейдите в приложение.</p><p><a href="/blago4/">👉 Открыть приложение</a></p>`, 'success');
             } catch (err) {
-                showStatus(`❌ Ошибка: ${err.message}`, 'error');
-                console.error('Ошибка:', err);
+                show(`❌ Ошибка: ${err.message}`, 'error');
             }
         }
 
-        async function clearData() {
-            if (!db) {
-                showStatus('❌ БД не инициализирована. Перезагрузите страницу и попробуйте снова.', 'error');
-                return;
+        // ВАРИАНТ 2: АДМИНИСТРАТОР + ДЕМО-ДАННЫЕ
+        async function initWithDemo() {
+            if (!db) { show('❌ Firebase не инициализирована. Перезагрузите страницу.', 'error'); return; }
+            show('⏳ Инициализация с демо-данными...', 'info');
+            
+            try {
+                const snap = await db.ref('users').once('value');
+                if (snap.val() && Object.keys(snap.val()).length > 0) {
+                    show('⚠️ Система уже инициализирована! Если нужно начать заново, нажмите УДАЛИТЬ ВСЕ ДАННЫЕ.', 'warning');
+                    return;
+                }
+
+                const data = {
+                    users: {
+                        '1769519370597': { id: 1769519370597, name: 'Никитин', email: 'admin@blago.ru', password: '1166', role: 'admin', active: true, createdDate: new Date().toLocaleDateString('ru-RU') },
+                        '1769519370598': { id: 1769519370598, name: 'Петров', email: 'petrov@blago.ru', password: '2233', role: 'user', active: true, createdDate: new Date().toLocaleDateString('ru-RU') }
+                    },
+                    income: [
+                        { desc: 'Пожертвование компании "АБВ"', amount: 50000, date: '01.02.2026' },
+                        { desc: 'Грант благотворительного фонда', amount: 150000, date: '03.02.2026' },
+                        { desc: 'Пожертвование физлица', amount: 25000, date: '05.02.2026' }
+                    ],
+                    expense: [
+                        { desc: 'Закупка продуктов питания', amount: 35000, date: '02.02.2026' },
+                        { desc: 'Доставка и логистика', amount: 8000, date: '04.02.2026' },
+                        { desc: 'Коммунальные услуги', amount: 12000, date: '05.02.2026' }
+                    ],
+                    warehouse: [
+                        { name: 'Рис (10кг)', qty: 5, location: 'Склад Софийская ул.', date: '01.02.2026' },
+                        { name: 'Гречка (5кг)', qty: 8, location: 'Склад Софийская ул.', date: '02.02.2026' },
+                        { name: 'Зимняя одежда', qty: 20, location: 'Склад Песочный', date: '03.02.2026' },
+                        { name: 'Одеяла и подушки', qty: 15, location: 'Склад Песочный', date: '04.02.2026' }
+                    ],
+                    donors: {
+                        '1': { name: 'ООО "Альтер-Эго"', email: 'info@alter.ru', amount: 150000, date: '01.02.2026', rating: '⭐⭐⭐⭐⭐' },
+                        '2': { name: 'Иван Петров (физ.лицо)', email: 'ivan@mail.ru', amount: 50000, date: '03.02.2026', rating: '⭐⭐⭐⭐' },
+                        '3': { name: 'Фонд исторического наследия', email: 'contact@heritage.org', amount: 25000, date: '05.02.2026', rating: '⭐⭐⭐' }
+                    },
+                    letters: [
+                        { text: 'Уважаемый коллега,\n\nОт имени организации "Благо дарить!" выражаем благодарность за помощь и поддержку.\n\nВаш вклад помогает нам продолжать помогать нуждающимся.\n\nС уважением,\nКоманда "Благо дарить!"\ng. Санкт-Петербург, 2026', date: '02.02.2026', time: '14:30:00' }
+                    ],
+                    press: [
+                        { title: 'Открытие нового склада помощи', category: 'Событие', text: 'Торжественно открыт новый пункт раздачи помощи на ул. Песочная. Это позволит расширить охват помощи. Спасибо волонтерам!', date: '05.02.2026', time: '16:45:00' },
+                        { title: 'Завершение зимней программы помощи', category: 'Новость', text: 'За три месяца обеспечили тепло и продукты для 250 семей. Спасибо волонтерам и благотворителям!', date: '03.02.2026', time: '11:20:00' },
+                        { title: 'Отчет о деятельности январь 2026', category: 'Отчет', text: 'Показатели: 180 получивших помощь, 45 активных волонтеров, 225,000₽ собрано и потрачено.', date: '01.02.2026', time: '09:00:00' }
+                    ]
+                };
+
+                await db.ref().set(data);
+                show(`<strong>✅ СИСТЕМА ИНИЦИАЛИЗИРОВАНА!</strong><br><br><strong>Администратор:</strong><br><div class="credentials">👤 Имя: <code>Никитин</code><br>🔐 Пароль: <code>1166</code></div><strong>Пользователь:</strong><br><div class="credentials">👤 Имя: <code>Петров</code><br>🔐 Пароль: <code>2233</code></div><strong>Добавлено:</strong> финансы (3+3), склад (4 товара), CRM (3 благотворителя), новости (3), письмо (1)<br><p><strong>✅ Готово!</strong></p><p><a href="/blago4/">👉 Открыть приложение</a></p>`, 'success');
+            } catch (err) {
+                show(`❌ Ошибка: ${err.message}`, 'error');
+                console.error(err);
             }
-            
-            if (!confirm('⚠️ ВНИМАНИЕ! Все данные системы будут безвозвратно удалены! Вы уверены?')) return;
-            
-            showStatus('⏳ Очистка базы данных...', 'info');
+        }
+
+        // ОЧИСТКА ВСЕХ ДАННЫХ
+        async function clearData() {
+            if (!db) { show('❌ Firebase не инициализирована.', 'error'); return; }
+            if (!confirm('⚠️ ВНИМАНИЕ!\n\nВСЕ ДАННЫЕ БУДУТ УДАЛЕНЫ НАВСЕГДА!\n\nУ вас уверены?')) return;
+            show('⏳ Удаление всех данных...', 'info');
             try {
                 await db.ref().set(null);
-                showStatus('✅ БД очищена! Все данные удалены.', 'success');
+                show('✅ БД полностью очищена. Все данные удалены. Система готова к новой инициализации.', 'success');
             } catch (err) {
-                showStatus(`❌ Ошибка: ${err.message}`, 'error');
+                show(`❌ Ошибка: ${err.message}`, 'error');
             }
         }
 
-        // Проверяем подключение при загрузке
         window.addEventListener('load', () => {
-            if (db) {
-                showStatus('✅ Firebase подключена | Проект: blago-a6270', 'success');
-            } else {
-                showStatus('⚠️ Firebase загружается, подождите...', 'info');
-                setTimeout(() => {
-                    if (db) {
-                        showStatus('✅ Firebase подключена | Проект: blago-a6270', 'success');
-                    } else {
-                        showStatus('❌ Ошибка подключения к Firebase. Перезагрузите страницу.', 'error');
-                    }
-                }, 1000);
-            }
+            console.log(db ? '✅ Firebase готова' : '❌ Firebase ошибка');
         });
     </script>
 </body>
