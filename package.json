@@ -1,0 +1,47 @@
+{
+  "name": "blago-podarit-portal",
+  "version": "1.0.0",
+  "description": "Портал 'Благо дарить!' - Система управления волонтерской помощью СВО",
+  "main": "index.html",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nikignom33103-coder/blago4.git"
+  },
+  "keywords": [
+    "волонтеры",
+    "благотворительность",
+    "помощь",
+    "СВО",
+    "управление",
+    "финансы",
+    "рейсы",
+    "firebase",
+    "web-app",
+    "русский"
+  ],
+  "author": "Волонтерская группа 'Благо дарить!'",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nikignom33103-coder/blago4/issues"
+  },
+  "homepage": "https://github.com/nikignom33103-coder/blago4#readme",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "dev": "python -m http.server 8000 --directory . &",
+    "build": "echo 'No build required for this project'",
+    "test": "echo 'Tests will be added later'",
+    "deploy": "echo 'Deploy to GitHub Pages or Netlify'"
+  },
+  "dependencies": {
+    "firebase": "^10.7.0"
+  },
+  "optionalDependencies": {
+    "jspdf": "^2.5.1",
+    "html2canvas": "^1.4.1",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
