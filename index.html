@@ -3,142 +3,265 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Портал "Благо дарить!" - Волонтерская помощь СВО</title>
+    <title>"Благо дарить!" - Система учета волонтерской помощи</title>
     <link rel="stylesheet" href="src/css/styles.css">
     <link rel="stylesheet" href="src/css/dashboard.css">
+    <link rel="stylesheet" href="src/css/auth.css">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; }
+        .hidden { display: none !important; }
+    </style>
 </head>
 <body>
-    <div class="app-container">
-        <!-- Боковое меню навигации -->
-        <aside class="sidebar">
-            <div class="logo">
-                <h1>Благо дарить!</h1>
-                <p class="tagline">Волонтерский портал</p>
-            </div>
-            <nav class="main-nav">
-                <ul>
-                    <li class="nav-item">
-                        <a href="#dashboard" class="nav-link active" data-page="dashboard">
-                            <span class="icon">📊</span>
-                            <span>Дашборд</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#finance" class="nav-link" data-page="finance">
-                            <span class="icon">💰</span>
-                            <span>Финансы</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#trips" class="nav-link" data-page="trips">
-                            <span class="icon">🚗</span>
-                            <span>Рейсы</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#collections" class="nav-link" data-page="collections">
-                            <span class="icon">🎯</span>
-                            <span>Сборы & Заказы</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#warehouse" class="nav-link" data-page="warehouse">
-                            <span class="icon">📦</span>
-                            <span>Склад</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#presscenter" class="nav-link" data-page="presscenter">
-                            <span class="icon">📢</span>
-                            <span>Пресс-центр</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#thanksletter" class="nav-link" data-page="thanksletter">
-                            <span class="icon">📜</span>
-                            <span>Благодарства</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#crm" class="nav-link" data-page="crm">
-                            <span class="icon">🤝</span>
-                            <span>CRM Благ.</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#settings" class="nav-link" data-page="settings">
-                            <span class="icon">⚙️</span>
-                            <span>Справочники</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="user-section">
-                <div class="user-info" id="userInfo">
-                    <p class="user-name">Гость</p>
-                    <button class="btn-logout" id="logoutBtn">Выход</button>
+    <!-- ============= ЭКРАН АВТОРИЗАЦИИ ============= -->
+    <div id="auth-screen">
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+            <div class="auth-container">
+                <!-- Левая часть - информация -->
+                <div class="auth-info">
+                    <h1 style="font-size: 48px; margin-bottom: 20px; color: white;">Благо дарить!</h1>
+                    <div class="version" style="font-size: 13px; opacity: 0.85; color: white;">Версия 1.4.0 · г. Санкт-Петербург · 2026</div>
+                    <p style="font-size: 16px; line-height: 1.8; opacity: 0.95; margin: 30px 0; color: white;">
+                        Профессиональная система учета волонтерской помощи и благотворительности. 
+                        Управляйте финансами, рейсами, складом и благодарственными письмами в одном месте.
+                    </p>
+                    <ul class="auth-features">
+                        <li style="color: white;">📊 Полная аналитика и отчетность</li>
+                        <li style="color: white;">💰 Контроль финансов в реальном времени</li>
+                        <li style="color: white;">📦 Управление двумя складами</li>
+                        <li style="color: white;">🤝 CRM для благотворителей</li>
+                        <li style="color: white;">📜 Профессиональные документы</li>
+                        <li style="color: white;">🔐 Защита данных Firebase</li>
+                    </ul>
                 </div>
-            </div>
-        </aside>
 
-        <!-- Основной контент -->
-        <main class="main-content">
-            <!-- Верхняя панель -->
-            <header class="top-bar">
-                <div class="header-left">
-                    <button class="menu-toggle" id="menuToggle">☰</button>
-                    <h2 id="pageTitle">Дашборд</h2>
-                </div>
-                <div class="header-right">
-                    <input type="text" class="search-box" placeholder="Поиск..." id="searchInput">
-                    <div class="notifications">
-                        <span class="notification-icon">🔔</span>
+                <!-- Правая часть - форма входа -->
+                <div class="auth-form">
+                    <h2>Вход в систему</h2>
+                    <p class="subtitle">Используйте существующие учетные данные</p>
+
+                    <div id="auth-alert" class="hidden alert"></div>
+
+                    <form id="login-form" onsubmit="handleLogin(event)">
+                        <div class="form-group">
+                            <label for="login-email">Email адрес</label>
+                            <input type="email" id="login-email" placeholder="your@email.com" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="login-password">Пароль</label>
+                            <input type="password" id="login-password" placeholder="••••••••" required>
+                        </div>
+
+                        <button type="submit" class="auth-button" id="login-btn">
+                            Войти в систему
+                        </button>
+                    </form>
+
+                    <div class="auth-toggle">
+                        <span>Нет аккаунта? <a href="#" onclick="switchAuthTab(event, 'register')" style="color: #667eea; text-decoration: none; font-weight: 600;">Зарегистрироваться</a></span>
                     </div>
                 </div>
-            </header>
-
-            <!-- Контентная область -->
-            <div class="content-wrapper">
-                <div id="pageContent">
-                    <!-- Содержимое страниц загружается здесь -->
-                </div>
             </div>
-        </main>
+        </div>
     </div>
 
-    <!-- Модальное окно для входа -->
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <h2>Вход в систему</h2>
-            <form id="loginForm">
-                <input type="email" id="email" placeholder="Email" required>
-                <input type="password" id="password" placeholder="Пароль" required>
-                <button type="submit" class="btn-primary">Войти</button>
-            </form>
-            <p class="signup-link">Нет аккаунта? <a href="#" id="signupLink">Зарегистрироваться</a></p>
+    <!-- ============= ОСНОВНОЕ ПРИЛОЖЕНИЕ ============= -->
+    <div id="app-screen" class="hidden">
+        <div class="app-container">
+            <!-- Боковое меню навигации -->
+            <aside class="sidebar">
+                <div class="logo">
+                    <h1>Благо дарить!</h1>
+                    <p class="tagline">v1.4.0</p>
+                </div>
+
+                <div class="user-info" style="padding: 15px; background: #f0f9ff; border-radius: 8px; margin-bottom: 20px;">
+                    <div style="font-size: 12px; color: #666;">Пользователь</div>
+                    <div style="font-weight: bold; font-size: 14px; color: #2563eb;">
+                        <span id="user-name">Загрузка...</span>
+                    </div>
+                    <button onclick="handleLogout()" style="margin-top: 10px; width: 100%; padding: 8px; background: #e53e3e; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">Выход</button>
+                </div>
+
+                <nav class="main-nav">
+                    <ul>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link active" onclick="navigateTo(event, 'dashboard')">
+                                <span class="icon">📊</span>
+                                <span>Дашборд</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" onclick="navigateTo(event, 'finance')">
+                                <span class="icon">💰</span>
+                                <span>Финансы</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" onclick="navigateTo(event, 'warehouse')">
+                                <span class="icon">🏭</span>
+                                <span>Склад</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" onclick="navigateTo(event, 'crm')">
+                                <span class="icon">🤝</span>
+                                <span>CRM</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" onclick="navigateTo(event, 'thanksletter')">
+                                <span class="icon">📜</span>
+                                <span>Благодарства</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" onclick="navigateTo(event, 'settings')">
+                                <span class="icon">⚙️</span>
+                                <span>Справочники</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Основной контент -->
+            <main class="main-content">
+                <div id="page-content" style="padding: 30px;">
+                    <div style="text-align: center; padding: 60px 20px;">
+                        <div style="font-size: 48px; margin-bottom: 20px;">📊</div>
+                        <h1 style="color: #2563eb; margin-bottom: 10px; font-size: 32px;">Добро пожаловать в "Благо дарить!"</h1>
+                        <p style="color: #666; font-size: 16px;">Выберите раздел из меню слева для начала работы</p>
+                        <p style="color: #999; font-size: 14px; margin-top: 20px;">v1.4.0 · г. Санкт-Петербург · 2026</p>
+                    </div>
+                </div>
+            </main>
         </div>
     </div>
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
 
-    <!-- Основные скрипты -->
+    <!-- Конфигурация Firebase -->
     <script src="src/js/config.js"></script>
-    <script src="src/js/auth.js"></script>
-    <script src="src/js/navigation.js"></script>
-    <script src="src/js/app.js"></script>
+    
+    <!-- Скрипты приложения -->
+    <script>
+        let currentUser = null;
+        let database = firebase.database();
 
-    <!-- Модули приложения -->
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            firebase.auth().onAuthStateChanged((user) => {
+                if (user) {
+                    currentUser = user;
+                    showAppScreen();
+                    loadUserProfile();
+                } else {
+                    showAuthScreen();
+                }
+            });
+        }
+
+        function showAuthScreen() {
+            document.getElementById('auth-screen').classList.remove('hidden');
+            document.getElementById('app-screen').classList.add('hidden');
+        }
+
+        function showAppScreen() {
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('app-screen').classList.remove('hidden');
+        }
+
+        function switchAuthTab(event, tab) {
+            event.preventDefault();
+            // Пока только форма входа, регистрацию можно добавить позже
+        }
+
+        function showAlert(message, type = 'error') {
+            const alert = document.getElementById('auth-alert');
+            alert.textContent = message;
+            alert.className = `alert ${type}`;
+            alert.classList.remove('hidden');
+            setTimeout(() => alert.classList.add('hidden'), 5000);
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const btn = document.getElementById('login-btn');
+
+            btn.disabled = true;
+            btn.innerHTML = 'Вход...';
+
+            try {
+                await firebase.auth().signInWithEmailAndPassword(email, password);
+                showAlert('✓ Успешный вход!', 'success');
+            } catch (error) {
+                showAlert('✗ Ошибка: ' + getErrorMessage(error.code), 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Войти в систему';
+            }
+        }
+
+        function getErrorMessage(code) {
+            const errors = {
+                'auth/user-not-found': 'Пользователь не найден',
+                'auth/wrong-password': 'Неверный пароль',
+                'auth/too-many-requests': 'Слишком много попыток входа. Попробуйте позже'
+            };
+            return errors[code] || 'Произошла ошибка. Попробуйте позже';
+        }
+
+        async function loadUserProfile() {
+            const uid = currentUser.uid;
+            const snapshot = await database.ref(`users/${uid}`).once('value');
+            const user = snapshot.val();
+            document.getElementById('user-name').textContent = user?.name || currentUser.email;
+        }
+
+        function handleLogout() {
+            if (confirm('Вы уверены?')) {
+                firebase.auth().signOut();
+            }
+        }
+
+        function navigateTo(event, page) {
+            event.preventDefault();
+            const content = document.getElementById('page-content');
+            
+            const pages = {
+                'dashboard': '<h2 style="color: #2563eb; margin-bottom: 20px;">📊 Дашборд</h2><p>Статистика и аналитика</p>',
+                'finance': '<h2 style="color: #2563eb; margin-bottom: 20px;">💰 Финансы</h2><p>Управление доходами и расходами</p>',
+                'warehouse': '<h2 style="color: #2563eb; margin-bottom: 20px;">🏭 Склад</h2><p>Управление складами</p>',
+                'crm': '<h2 style="color: #2563eb; margin-bottom: 20px;">🤝 CRM</h2><p>Управление благотворителями</p>',
+                'thanksletter': '<h2 style="color: #2563eb; margin-bottom: 20px;">📜 Благодарства</h2><p>Благодарственные письма</p>',
+                'settings': '<h2 style="color: #2563eb; margin-bottom: 20px;">⚙️ Справочники</h2><p>Настройки системы</p>'
+            };
+
+            content.innerHTML = pages[page] || '<p>Раздел в разработке</p>';
+
+            // Обновляем активный пункт меню
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            event.target.closest('.nav-link').classList.add('active');
+        }
+    </script>
+
+    <!-- Модули приложения (нужно создать) -->
     <script src="src/js/modules/dashboard.js"></script>
     <script src="src/js/modules/finance.js"></script>
-    <script src="src/js/modules/trips.js"></script>
-    <script src="src/js/modules/collections.js"></script>
     <script src="src/js/modules/warehouse.js"></script>
-    <script src="src/js/modules/presscenter.js"></script>
-    <script src="src/js/modules/thanksletter.js"></script>
     <script src="src/js/modules/crm.js"></script>
+    <script src="src/js/modules/thanksletter.js"></script>
     <script src="src/js/modules/signature.js"></script>
     <script src="src/js/modules/settings.js"></script>
 </body>
