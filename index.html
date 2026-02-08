@@ -444,30 +444,56 @@
             appId: "1:123456789012:web:abcdef123456"
         };
 
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-
+        let db = null;
         let currentUser = null;
         let appData = { income: [], expense: [], warehouse: [], donors: [], letters: [] };
 
-        // ===== ИНИЦИАЛИЗАЦИЯ =====
-        setTimeout(() => {
-            loadAppData();
-        }, 200);
+        // ===== ИНИЦИАЛИЗАЦИЯ FIREBASE =====
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.database();
+            console.log('✅ Firebase инициализирован');
+        } catch (err) {
+            console.error('❌ Ошибка Firebase:', err);
+        }
 
+        // ===== ЗАГРУЗКА ДАННЫХ =====
         function loadAppData() {
+            if (!db) {
+                console.warn('⚠️ БД не готова, повторяю попытку...');
+                setTimeout(loadAppData, 500);
+                return;
+            }
+            
             db.ref().once('value', (snap) => {
                 const data = snap.val();
                 if (data) {
                     appData = data;
+                    console.log('✅ Данные загружены из БД');
                     updateDashboard();
+                } else {
+                    console.log('⚠️ БД пуста - инициализируйте admin через init-db.html');
                 }
+            }).catch(err => {
+                console.error('❌ Ошибка загрузки данных:', err);
+                setTimeout(loadAppData, 1000);
             });
         }
+
+        // Загрузка при готовости
+        window.addEventListener('load', () => {
+            setTimeout(loadAppData, 300);
+        });
 
         // ===== АВТОРИЗАЦИЯ =====
         async function handleLogin(e) {
             e.preventDefault();
+            
+            if (!db) {
+                alert('❌ БД не инициализирована. Перезагрузите страницу.');
+                return;
+            }
+
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             const btn = document.getElementById('loginBtn');
@@ -549,6 +575,7 @@
 
         // ===== ФИНАНСЫ =====
         function addIncome() {
+            if (!db) { alert('❌ БД не готова. Перезагрузите страницу.'); return; }
             const desc = document.getElementById('incomeDesc').value;
             const amount = parseInt(document.getElementById('incomeAmount').value) || 0;
             if (!desc || !amount) { alert('Заполните все поля'); return; }
@@ -565,6 +592,7 @@
         }
 
         function addExpense() {
+            if (!db) { alert('❌ БД не готова. Перезагрузите страницу.'); return; }
             const desc = document.getElementById('expenseDesc').value;
             const amount = parseInt(document.getElementById('expenseAmount').value) || 0;
             if (!desc || !amount) { alert('Заполните все поля'); return; }
@@ -593,6 +621,7 @@
 
         // ===== СКЛАД =====
         function addWarehouseItem() {
+            if (!db) { alert('❌ БД не готова. Перезагрузите страницу.'); return; }
             const item = document.getElementById('warehouseItem').value;
             const qty = parseInt(document.getElementById('warehouseQty').value) || 0;
             const loc = document.getElementById('warehouseLocation').value;
@@ -618,6 +647,7 @@
 
         // ===== CRM =====
         function addDonor() {
+            if (!db) { alert('❌ БД не готова. Перезагрузите страницу.'); return; }
             const name = document.getElementById('donorName').value;
             const email = document.getElementById('donorEmail').value;
             const amount = parseInt(document.getElementById('donorAmount').value) || 0;
@@ -666,6 +696,7 @@
         }
 
         function saveLetter() {
+            if (!db) { alert('❌ БД не готова. Перезагрузите страницу.'); return; }
             const text = document.getElementById('letterText').value;
             if (!text) { alert('Напишите текст письма'); return; }
             if (!appData.letters) appData.letters = [];
@@ -690,6 +721,7 @@
 
         // ===== АДМИНИСТРАТОР =====
         async function addNewUser() {
+            if (!db) { alert('❌ БД не готова. Перезагрузите страницу.'); return; }
             if (currentUser.role !== 'admin') {
                 alert('❌ Только администраторы могут добавлять пользователей');
                 return;
@@ -740,6 +772,7 @@
         }
 
         async function deleteUser(uid) {
+            if (!db) { alert('❌ БД не готова. Перезагрузите страницу.'); return; }
             if (currentUser.role !== 'admin') {
                 alert('❌ Только администраторы могут удалять пользователей');
                 return;
@@ -760,6 +793,7 @@
         }
 
         async function updateUsersList() {
+            if (!db) { alert('❌ БД не готова. Перезагрузите страницу.'); return; }
             try {
                 const usersSnap = await db.ref('users').once('value');
                 const users = usersSnap.val() || {};
