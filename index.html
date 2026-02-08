@@ -372,15 +372,34 @@
 
     <script>
         let currentUser = null;
-        let db = firebase.database();
+        let db;
         let appData = { income: [], expense: [], warehouse: [], donors: [], letters: [] };
 
-        // ===== ИНИЦИАЛИЗАЦИЯ =====
-        document.addEventListener('DOMContentLoaded', () => {
+        // ===== ИНИЦИАЛИЗАЦИЯ FIREBASE =====
+        function initDatabase() {
+            if (typeof firebase === 'undefined' || !firebase.apps.length) {
+                console.error('Firebase не инициализирован');
+                setTimeout(initDatabase, 100);
+                return;
+            }
+            db = firebase.database();
             loadAppData();
-        });
+        }
+
+        // Ждем загрузки config.js и инициализации Firebase
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                setTimeout(initDatabase, 100);
+            });
+        } else {
+            setTimeout(initDatabase, 100);
+        }
 
         function loadAppData() {
+            if (!db) {
+                setTimeout(loadAppData, 100);
+                return;
+            }
             db.ref().once('value', (snap) => {
                 const data = snap.val();
                 if (data) {
@@ -401,6 +420,11 @@
             btn.textContent = 'Проверка...';
 
             try {
+                if (!db) {
+                    showAlert('❌ База данных не загружена', 'error');
+                    return;
+                }
+
                 // Проверяем пользователей в Firebase
                 const usersSnap = await db.ref('users').once('value');
                 const users = usersSnap.val() || {};
@@ -471,6 +495,7 @@
             const desc = document.getElementById('incomeDesc').value;
             const amount = parseInt(document.getElementById('incomeAmount').value) || 0;
             if (!desc || !amount) return;
+            if (!db) { alert('База данных еще не загружена'); return; }
 
             if (!appData.income) appData.income = [];
             appData.income.push({ desc, amount, date: new Date().toLocaleDateString() });
@@ -486,6 +511,7 @@
             const desc = document.getElementById('expenseDesc').value;
             const amount = parseInt(document.getElementById('expenseAmount').value) || 0;
             if (!desc || !amount) return;
+            if (!db) { alert('База данных еще не загружена'); return; }
 
             if (!appData.expense) appData.expense = [];
             appData.expense.push({ desc, amount, date: new Date().toLocaleDateString() });
@@ -514,6 +540,7 @@
             const qty = parseInt(document.getElementById('warehouseQty').value) || 0;
             const loc = document.getElementById('warehouseLocation').value;
             if (!item || !qty) return;
+            if (!db) { alert('База данных еще не загружена'); return; }
 
             if (!appData.warehouse) appData.warehouse = [];
             appData.warehouse.push({ item, qty, location: loc });
@@ -538,6 +565,7 @@
             const email = document.getElementById('donorEmail').value;
             const amount = parseInt(document.getElementById('donorAmount').value) || 0;
             if (!name || !email || !amount) return;
+            if (!db) { alert('База данных еще не загружена'); return; }
 
             if (!appData.donors) appData.donors = {};
             const id = Date.now();
@@ -583,6 +611,7 @@
         function saveLetter() {
             const text = document.getElementById('letterText').value;
             if (!text) { alert('Напишите текст письма'); return; }
+            if (!db) { alert('База данных еще не загружена'); return; }
             if (!appData.letters) appData.letters = [];
             appData.letters.push(text);
             db.ref('letters').set(appData.letters);

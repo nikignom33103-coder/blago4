@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Инициализация БД - Благо дарить!</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f0fdf4;
+        }
+        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #065f46; }
+        button { padding: 10px 20px; background: #10b981; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+        button:hover { background: #059669; }
+        pre { background: #f5f5f5; padding: 10px; border-radius: 4px; overflow-x: auto; }
+        .status { margin: 20px 0; padding: 10px; border-radius: 4px; }
+        .success { background: #c6f6d5; color: #22543d; }
+        .error { background: #fed7d7; color: #c53030; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🟢 Инициализация БД Благо дарить!</h1>
+        <p>Нажмите кнопку ниже чтобы инициализировать базу данных с пользователями и тестовыми данными.</p>
+        
+        <button onclick="initDatabase()">✅ ИНИЦИАЛИЗИРОВАТЬ БД</button>
+        <button onclick="clearData()">❌ ОЧИСТИТЬ БД</button>
+        
+        <div id="status"></div>
+    </div>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDwQ_gQ_K-s8l-s9H-mQ1k2L3m4N5o6P7q8",
+            authDomain: "blago-a6270.firebaseapp.com",
+            databaseURL: "https://blago-a6270-default-rtdb.firebaseio.com",
+            projectId: "blago-a6270",
+            storageBucket: "blago-a6270.appspot.com",
+            messagingSenderId: "123456789012",
+            appId: "1:123456789012:web:abcdef123456"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        function showStatus(msg, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = `<div class="status ${type}">${msg}</div>`;
+        }
+
+        async function initDatabase() {
+            showStatus('⏳ Инициализация базы данных...', 'success');
+            
+            try {
+                // 1. Создаем пользователей
+                const users = {
+                    '1769519370597': {
+                        id: 1769519370597,
+                        name: 'Никитин Иван Андреевич',
+                        email: 'admin@blago.ru',
+                        password: '1166',
+                        role: 'admin',
+                        active: true
+                    },
+                    '1234567890': {
+                        id: 1234567890,
+                        name: 'Александр Петров',
+                        email: 'user@blago.ru',
+                        password: '1234',
+                        role: 'user',
+                        active: true
+                    }
+                };
+
+                await db.ref('users').set(users);
+                console.log('✅ Пользователи добавлены');
+
+                // 2. Добавляем тестовые данные
+                const testData = {
+                    income: [
+                        { desc: 'Благотворительный взнос', amount: 50000, date: '08.02.2026' },
+                        { desc: 'Пожертвование компании', amount: 100000, date: '07.02.2026' }
+                    ],
+                    expense: [
+                        { desc: 'Закупка товаров', amount: 30000, date: '06.02.2026' },
+                        { desc: 'Зарплата волонтерам', amount: 20000, date: '05.02.2026' }
+                    ],
+                    warehouse: [
+                        { item: 'Продукты', qty: 100, location: 'Склад Софийская ул.' },
+                        { item: 'Одежда', qty: 50, location: 'Склад Песочный' },
+                        { item: 'Лекарства', qty: 200, location: 'Склад Софийская ул.' }
+                    ],
+                    donors: {
+                        '1': { name: 'Борис Иванов', email: 'boris@example.com', amount: 50000, date: '01.02.2026' },
+                        '2': { name: 'ООО Альфа', email: 'info@alfa.ru', amount: 150000, date: '03.02.2026' },
+                        '3': { name: 'Мария Сидорова', email: 'maria@example.com', amount: 10000, date: '04.02.2026' }
+                    },
+                    letters: [
+                        'Уважаемый [ФИО], спасибо за вашу помощь!',
+                        'Благодарим вас за поддержку нашего проекта'
+                    ]
+                };
+
+                await db.ref('income').set(testData.income);
+                await db.ref('expense').set(testData.expense);
+                await db.ref('warehouse').set(testData.warehouse);
+                await db.ref('donors').set(testData.donors);
+                await db.ref('letters').set(testData.letters);
+
+                console.log('✅ Тестовые данные добавлены');
+
+                showStatus(`
+                    ✅ <strong>БД инициализирована успешно!</strong><br><br>
+                    <strong>Пользователи:</strong><br>
+                    • Имя: <strong>Никитин</strong> | Пароль: <strong>1166</strong><br>
+                    • Имя: <strong>Александр</strong> | Пароль: <strong>1234</strong><br><br>
+                    <strong>Добавлены тестовые данные:</strong><br>
+                    • 2 записи доходов (150,000 ₽)<br>
+                    • 2 записи расходов (50,000 ₽)<br>
+                    • 3 товара на складах<br>
+                    • 3 благотворителя<br>
+                    • 2 письма<br><br>
+                    Перейдите на главную страницу: <a href="/blago4/">https://nikignom33103-coder.github.io/blago4/</a>
+                `, 'success');
+
+            } catch (err) {
+                showStatus(`❌ Ошибка: ${err.message}`, 'error');
+                console.error('Ошибка:', err);
+            }
+        }
+
+        async function clearData() {
+            if (!confirm('⚠️ Вы уверены? Все данные будут удалены!')) return;
+            
+            showStatus('⏳ Очистка базы данных...', 'success');
+            try {
+                await db.ref().set(null);
+                showStatus('✅ База данных очищена', 'success');
+            } catch (err) {
+                showStatus(`❌ Ошибка: ${err.message}`, 'error');
+            }
+        }
+
+        // Проверяем подключение при загрузке
+        window.addEventListener('load', () => {
+            showStatus('✅ Firebase подключена к: blago-a6270', 'success');
+        });
+    </script>
+</body>
+</html>
