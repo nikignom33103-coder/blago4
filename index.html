@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>"Благо дарить!" v1.4.0 - Профессиональная система</title>
+    <title>"Благо дарить!" v2.0 - Профессиональная система управления</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -59,7 +59,7 @@
         .page-header p { color: #6b7280; font-size: 15px; }
         .card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px; }
         .card h3 { color: #1a202c; margin-bottom: 15px; font-size: 18px; }
-        .card input, .card select { padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 6px; margin-right: 10px; font-size: 14px; }
+        .card input, .card select, .card textarea { padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 6px; margin: 5px 5px 5px 0; font-size: 14px; font-family: inherit; width: calc(100% - 10px); }
         .card button { padding: 8px 16px; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; margin: 5px 5px 5px 0; }
         .card button:hover { background: #059669; }
         .card button.danger { background: #dc2626; }
@@ -87,7 +87,8 @@
         .btn.danger { background: #dc2626; color: white; }
         .btn.danger:hover { background: #b91c1c; }
         
-        /* ===== АДАПТИВНОСТЬ ===== */
+        code { background: #f3f4f6; padding: 2px 6px; border-radius: 3px; font-family: 'Courier New', monospace; font-size: 12px; }
+        
         @media (max-width: 1024px) {
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
             .app-wrapper { grid-template-columns: 200px 1fr; }
@@ -103,382 +104,292 @@
     </style>
 </head>
 <body>
-    <!-- ЭКРАН ВХОДА -->
+    <!-- ===== ЭКРАН ВХОДА ===== -->
     <div id="loginScreen" class="login-screen">
         <div class="login-box">
             <div class="login-info">
-                <h1>🟢 Благо дарить!</h1>
-                <div class="version">v1.4.0 Профессиональная система</div>
-                <p>Полнофункциональная система управления волонтерской деятельностью и благотворительностью. Все инструменты для эффективной работы в одном месте.</p>
+                <h1>💚 Благо дарить!</h1>
+                <p class="version">v2.0 | Система управления</p>
+                <p>Профессиональная платформа для управления деятельностью благотворительной организации. Все инструменты в одном месте.</p>
+                <p style="margin-top: 40px; opacity: 0.8; font-size: 13px;">🔐 Данные защищены в Firebase</p>
             </div>
             <div class="login-form">
-                <h2>Вход</h2>
-                <p class="subtitle">Введите учетные данные</p>
+                <h2>Вход в систему</h2>
+                <p class="subtitle">Введите учётные данные</p>
                 <div id="errorAlert"></div>
                 <form onsubmit="handleLogin(event)">
                     <div class="form-group">
-                        <label>👤 Имя пользователя:</label>
-                        <input type="text" id="username" placeholder="Никитин" required />
+                        <label>👤 Имя пользователя</label>
+                        <input type="text" id="username" placeholder="Например: Никитин" required />
                     </div>
                     <div class="form-group">
-                        <label>🔐 Пароль:</label>
-                        <input type="password" id="password" placeholder="1166" required />
+                        <label>🔑 Пароль</label>
+                        <input type="password" id="password" placeholder="Введите пароль" required />
                     </div>
-                    <button type="submit" class="btn-login" id="loginBtn">Вход в систему</button>
+                    <button type="submit" id="loginBtn" class="btn-login">Вход в систему</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- ПРИЛОЖЕНИЕ -->
+    <!-- ===== ПРИЛОЖЕНИЕ ===== -->
     <div id="appScreen" class="app-screen">
         <div class="app-wrapper">
-            <!-- САЙДБАР -->
+            <!-- БОКОВАЯ ПАНЕЛЬ -->
             <aside class="sidebar">
-                <h1>🟢 Благо</h1>
-                <div class="version">v1.4.0</div>
+                <h1>💚 Благо</h1>
+                <p class="version">v2.0</p>
                 
                 <div class="user-card">
-                    <div class="label">👤 Пользователь</div>
+                    <div class="label">Вы вошли как:</div>
                     <div class="name" id="userName">-</div>
                     <div class="role" id="userRole">-</div>
-                    <button class="btn-logout" onclick="handleLogout()">Выход (F12)</button>
+                    <button class="btn-logout" onclick="handleLogout()">Выход</button>
                 </div>
-                
-                <ul class="nav-menu">
+
+                <nav class="nav-menu">
                     <li class="nav-item"><a class="nav-link active" onclick="showPage(event, 'dashboard')"><span style="font-size: 18px;">📊</span> <span>Дашборд</span></a></li>
-                    <li class="nav-item"><a class="nav-link" onclick="showPage(event, 'finance')"><span style="font-size: 18px;">💰</span> <span>Финансы</span></a></li>
-                    <li class="nav-item"><a class="nav-link" onclick="showPage(event, 'warehouse')"><span style="font-size: 18px;">🏭</span> <span>Склад</span></a></li>
-                    <li class="nav-item"><a class="nav-link" onclick="showPage(event, 'crm')"><span style="font-size: 18px;">🤝</span> <span>CRM</span></a></li>
-                    <li class="nav-item"><a class="nav-link" onclick="showPage(event, 'press')"><span style="font-size: 18px;">📰</span> <span>Пресс-центр</span></a></li>
-                    <li class="nav-item"><a class="nav-link" onclick="showPage(event, 'thanksletter')"><span style="font-size: 18px;">📜</span> <span>Письма</span></a></li>
-                    <li class="nav-item"><a class="nav-link" onclick="showPage(event, 'settings')"><span style="font-size: 18px;">⚙️</span> <span>Справочники</span></a></li>
-                </ul>
+                    <li class="nav-item"><a class="nav-link" onclick="showPage(event, 'activities')"><span style="font-size: 18px;">📰</span> <span>Активности</span></a></li>
+                    <li class="nav-item"><a class="nav-link" onclick="showPage(event, 'reports')"><span style="font-size: 18px;">📋</span> <span>Отчёты</span></a></li>
+                    <li class="nav-item"><a class="nav-link" onclick="showPage(event, 'signatures')"><span style="font-size: 18px;">✍️</span> <span>Подписи</span></a></li>
+                    <li class="nav-item"><a class="nav-link" onclick="showPage(event, 'donors')"><span style="font-size: 18px;">🤝</span> <span>Благотворители</span></a></li>
+                    <li class="nav-item" id="adminPanel" style="border-top: 1px solid rgba(255,255,255,0.2); padding-top: 15px; margin-top: 15px;"><a class="nav-link" onclick="showPage(event, 'settings')"><span style="font-size: 18px;">⚙️</span> <span>Администрация</span></a></li>
+                </nav>
             </aside>
 
-            <!-- ОСНОВНОЙ КОНТЕНТ -->
+            <!-- ОСНОВНОЕ СОДЕРЖИМОЕ -->
             <main class="main-content">
-                
+
                 <!-- ДАШБОРД -->
                 <div id="dashboardPage">
                     <div class="page-header">
                         <h1>📊 Дашборд</h1>
-                        <p>Статистика системы в реальном времени</p>
+                        <p>Общая статистика системы в реальном времени</p>
                     </div>
-                    
                     <div class="stats-grid">
                         <div class="stat-card">
-                            <div class="stat-label">💰 Доход</div>
-                            <div class="stat-value" id="statIncome">0 ₽</div>
+                            <div class="stat-label">👥 Пользователей</div>
+                            <div class="stat-value" id="statUsers">0</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-label">📦 Расход</div>
-                            <div class="stat-value" id="statExpense">0 ₽</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-label">✅ Баланс</div>
-                            <div class="stat-value" id="statBalance">0 ₽</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-label">🤝 Благотворители</div>
+                            <div class="stat-label">🤝 Благотворителей</div>
                             <div class="stat-value" id="statDonors">0</div>
                         </div>
+                        <div class="stat-card">
+                            <div class="stat-label">📰 Активностей</div>
+                            <div class="stat-value" id="statActivities">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">📋 Отчётов</div>
+                            <div class="stat-value" id="statReports">0</div>
+                        </div>
                     </div>
-                    
                     <div class="card">
-                        <h3>📊 Система "Благо дарить!" v1.4.0</h3>
-                        <p style="margin-top: 15px; color: #6b7280; line-height: 1.6;">
-                            <strong>✅ Полнофункциональная профессиональная система управления благотворительностью</strong><br><br>
-                            Включает следующие модули:<br>
-                            🟢 <strong>Финансы</strong> - полный учет доходов, расходов, расчет баланса<br>
-                            🟢 <strong>Склад</strong> - управление товарами на 2-х местах (Софийская ул., Песочный)<br>
-                            🟢 <strong>CRM</strong> - база благотворителей с системой рейтинга (⭐⭐⭐⭐⭐)<br>
-                            🟢 <strong>Пресс-центр</strong> - публикации, новости, событие в одном месте<br>
-                            🟢 <strong>Письма</strong> - благодарственные письма с готовыми шаблонами<br>
-                            🟢 <strong>Справочники</strong> - управление пользователями и администратор<br><br>
-                            Все данные сохраняются в зашифрованной базе Firebase. Система готова к работе.<br><br>
-                            <strong>Город:</strong> г. Санкт-Петербург<br>
-                            <strong>Год:</strong> 2026<br>
+                        <h3>✅ Система подключена к Firebase</h3>
+                        <p style="margin-top: 10px; color: #6b7280;">
+                            <strong>Проект:</strong> blago-a6270<br>
+                            <strong>База:</strong> https://blago-a6270-default-rtdb.firebaseio.com<br><br>
+                            Текущие таблицы:<br>
+                            ✓ users - пользователи системы<br>
+                            ✓ donors - благотворители и спонсоры<br>
+                            ✓ activities - новости и события<br>
+                            ✓ reportSignatures - отчёты с подписями<br>
+                            ✓ signatures - управление подписями<br>
                         </p>
                     </div>
                 </div>
 
-                <!-- ФИНАНСЫ -->
-                <div id="financePage" class="hidden">
+                <!-- АКТИВНОСТИ -->
+                <div id="activitiesPage" class="hidden">
                     <div class="page-header">
-                        <h1>💰 Финансы</h1>
-                        <p>Управление доходами и расходами</p>
+                        <h1>📰 Активности и новости</h1>
+                        <p>Управление объявлениями и событиями организации</p>
                     </div>
-                    
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
-                        <div class="card">
-                            <h3>➕ Новый доход</h3>
-                            <div class="form-group">
-                                <label>Описание:</label>
-                                <input type="text" id="incomeDesc" placeholder="Пожертвование, грант..." />
-                            </div>
-                            <div class="form-group">
-                                <label>Сумма (₽):</label>
-                                <input type="number" id="incomeAmount" placeholder="1000" />
-                            </div>
-                            <button class="btn primary" onclick="addIncome()">✅ Добавить доход</button>
-                        </div>
-                        
-                        <div class="card">
-                            <h3>➖ Новый расход</h3>
-                            <div class="form-group">
-                                <label>Описание:</label>
-                                <input type="text" id="expenseDesc" placeholder="Закупка, услуга..." />
-                            </div>
-                            <div class="form-group">
-                                <label>Сумма (₽):</label>
-                                <input type="number" id="expenseAmount" placeholder="500" />
-                            </div>
-                            <button class="btn primary" onclick="addExpense()">✅ Добавить расход</button>
-                        </div>
-                    </div>
-                    
                     <div class="card">
-                        <h3>📋 История транзакций</h3>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Тип</th>
-                                    <th>Описание</th>
-                                    <th>Сумма</th>
-                                    <th>Дата</th>
-                                </tr>
-                            </thead>
-                            <tbody id="financeTable">
-                                <tr><td colspan="4" style="text-align: center; color: #999;">Нет данных</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- СКЛАД -->
-                <div id="warehousePage" class="hidden">
-                    <div class="page-header">
-                        <h1>🏭 Управление складом</h1>
-                        <p>Учет товаров на двух местах хранения</p>
-                    </div>
-                    
-                    <div class="card">
-                        <h3>📦 Добавить товар</h3>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
-                            <div class="form-group">
-                                <label>Название:</label>
-                                <input type="text" id="warehouseItem" placeholder="Продукты, одежда..." />
-                            </div>
-                            <div class="form-group">
-                                <label>Количество (шт):</label>
-                                <input type="number" id="warehouseQty" placeholder="10" />
-                            </div>
-                            <div class="form-group">
-                                <label>Склад:</label>
-                                <select id="warehouseLocation">
-                                    <option value="Склад Софийская ул.">Склад Софийская ул.</option>
-                                    <option value="Склад Песочный">Склад Песочный</option>
-                                </select>
-                            </div>
-                        </div>
-                        <button class="btn primary" onclick="addWarehouseItem()">✅ Добавить товар</button>
-                    </div>
-                    
-                    <div class="card">
-                        <h3>📊 Инвентарь</h3>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Товар</th>
-                                    <th>Количество</th>
-                                    <th>Хранилище</th>
-                                </tr>
-                            </thead>
-                            <tbody id="warehouseTable">
-                                <tr><td colspan="3" style="text-align: center; color: #999;">Нет товаров</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- CRM -->
-                <div id="crmPage" class="hidden">
-                    <div class="page-header">
-                        <h1>🤝 Благотворители</h1>
-                        <p>База данных с рейтингом и контактной информацией</p>
-                    </div>
-                    
-                    <div class="card">
-                        <h3>➕ Добавить благотворителя</h3>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
-                            <div class="form-group">
-                                <label>ФИО/Организация:</label>
-                                <input type="text" id="donorName" placeholder="Иван Петров" />
-                            </div>
-                            <div class="form-group">
-                                <label>Email:</label>
-                                <input type="email" id="donorEmail" placeholder="ivan@example.com" />
-                            </div>
-                            <div class="form-group">
-                                <label>Размер вклада (₽):</label>
-                                <input type="number" id="donorAmount" placeholder="10000" />
-                            </div>
-                        </div>
-                        <button class="btn primary" onclick="addDonor()">✅ Добавить благотворителя</button>
-                    </div>
-                    
-                    <div class="card">
-                        <h3>👥 Все благотворители</h3>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Имя/Организация</th>
-                                    <th>Email</th>
-                                    <th>Вклад</th>
-                                    <th>Рейтинг</th>
-                                </tr>
-                            </thead>
-                            <tbody id="crmTable">
-                                <tr><td colspan="4" style="text-align: center; color: #999;">Нет данных</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- ПРЕСС-ЦЕНТР (НОВОЕ) -->
-                <div id="pressPage" class="hidden">
-                    <div class="page-header">
-                        <h1>📰 Пресс-центр</h1>
-                        <p>Новости, события и публикации организации</p>
-                    </div>
-                    
-                    <div class="card">
-                        <h3>✍️ Новая публикация</h3>
+                        <h3>➕ Добавить новую активность</h3>
                         <div class="form-group">
-                            <label>Заголовок:</label>
-                            <input type="text" id="pressTitle" placeholder="Заголовок новости..." />
+                            <label>Заголовок</label>
+                            <input type="text" id="activityTitle" placeholder="Название активности..." />
                         </div>
                         <div class="form-group">
-                            <label>Категория:</label>
-                            <select id="pressCategory">
-                                <option value="Новость">🔔 Новость</option>
-                                <option value="Событие">🎉 Событие</option>
-                                <option value="Отчет">📊 Отчет</option>
-                                <option value="Объявление">📣 Объявление</option>
+                            <label>Описание</label>
+                            <textarea id="activityDesc" placeholder="Описание активности..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Тип</label>
+                            <select id="activityType">
+                                <option value="news">📢 Новость</option>
+                                <option value="event">🎉 Событие</option>
+                                <option value="announcement">📣 Объявление</option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label>Текст:</label>
-                            <textarea id="pressText" placeholder="Содержание публикации..."></textarea>
-                        </div>
-                        <button class="btn primary" onclick="addPress()">✅ Опубликовать</button>
+                        <button class="btn primary" onclick="addActivity()">✅ Добавить</button>
                     </div>
-                    
                     <div class="card">
-                        <h3>📰 Публикации</h3>
-                        <div id="pressList" style="display: grid; gap: 15px;">
-                            <div style="text-align: center; color: #999; padding: 20px;">Нет публикаций</div>
-                        </div>
+                        <h3>📋 Список активностей</h3>
+                        <div id="activitiesList" style="display: grid; gap: 10px;"></div>
                     </div>
                 </div>
 
-                <!-- ПИСЬМА -->
-                <div id="thanksletterPage" class="hidden">
+                <!-- ОТЧЁТЫ -->
+                <div id="reportsPage" class="hidden">
                     <div class="page-header">
-                        <h1>📜 Благодарственные письма</h1>
-                        <p>Шаблоны и редактирование писем</p>
+                        <h1>📋 Отчёты с подписями</h1>
+                        <p>Управление отчётами, требующими подписей</p>
                     </div>
-                    
                     <div class="card">
-                        <h3>📝 Выбрать шаблон</h3>
-                        <button class="btn primary" onclick="selectTemplate('formal')" style="margin-right: 10px;">📋 Официальное</button>
-                        <button class="btn primary" onclick="selectTemplate('short')" style="margin-right: 10px;">⚡ Краткое</button>
-                        <button class="btn primary" onclick="selectTemplate('detailed')">📖 Подробное</button>
-                    </div>
-                    
-                    <div class="card">
-                        <h3>✏️ Редактирование</h3>
+                        <h3>➕ Создать отчёт</h3>
                         <div class="form-group">
-                            <label>Текст письма:</label>
-                            <textarea id="letterText" style="min-height: 200px; font-family: 'Times New Roman', serif;"></textarea>
+                            <label>Название отчёта</label>
+                            <input type="text" id="reportTitle" placeholder="Название отчёта..." />
                         </div>
-                        <button class="btn primary" onclick="printLetter()" style="margin-right: 10px;">🖨️ Печать (Ctrl+P)</button>
-                        <button class="btn primary" onclick="saveLetter()">💾 Сохранить</button>
+                        <div class="form-group">
+                            <label>Содержание</label>
+                            <textarea id="reportContent" placeholder="Содержание отчёта..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Период</label>
+                            <input type="text" id="reportPeriod" placeholder="Например: январь 2026" />
+                        </div>
+                        <button class="btn primary" onclick="addReport()">✅ Создать</button>
                     </div>
-                    
                     <div class="card">
-                        <h3>📚 Сохраненные письма</h3>
-                        <div id="lettersList" style="display: grid; gap: 15px;">
-                            <div style="text-align: center; color: #999; padding: 20px;">Нет сохраненных писем</div>
-                        </div>
+                        <h3>📄 Список отчётов</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Название</th>
+                                    <th>Период</th>
+                                    <th>Подписей</th>
+                                    <th>Дата</th>
+                                    <th>Действие</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reportsTable"></tbody>
+                        </table>
                     </div>
                 </div>
 
-                <!-- СПРАВОЧНИКИ -->
+                <!-- ПОДПИСИ -->
+                <div id="signaturesPage" class="hidden">
+                    <div class="page-header">
+                        <h1>✍️ Управление подписями</h1>
+                        <p>Сбор и управление подписями на документах</p>
+                    </div>
+                    <div class="card">
+                        <h3>➕ Добавить подпись</h3>
+                        <div class="form-group">
+                            <label>Документ</label>
+                            <input type="text" id="signDocument" placeholder="Название документа..." />
+                        </div>
+                        <div class="form-group">
+                            <label>ФИО подписывающего</label>
+                            <input type="text" id="signName" placeholder="Полное имя..." />
+                        </div>
+                        <div class="form-group">
+                            <label>Должность</label>
+                            <input type="text" id="signPosition" placeholder="Должность..." />
+                        </div>
+                        <button class="btn primary" onclick="addSignature()">✅ Добавить</button>
+                    </div>
+                    <div class="card">
+                        <h3>📝 Список подписей</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Документ</th>
+                                    <th>ФИО</th>
+                                    <th>Должность</th>
+                                    <th>Дата</th>
+                                    <th>Удалить</th>
+                                </tr>
+                            </thead>
+                            <tbody id="signaturesTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- БЛАГОТВОРИТЕЛИ -->
+                <div id="donorsPage" class="hidden">
+                    <div class="page-header">
+                        <h1>🤝 Управление благотворителями</h1>
+                        <p>Всё о партнёрах и спонсорах организации</p>
+                    </div>
+                    <div class="card">
+                        <h3>➕ Добавить благотворителя</h3>
+                        <div class="form-group">
+                            <label>Наименование / ФИО</label>
+                            <input type="text" id="donorName" placeholder="Название организации или имя..." />
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="donorEmail" placeholder="email@example.com" />
+                        </div>
+                        <div class="form-group">
+                            <label>Размер помощи (JSON объект)</label>
+                            <input type="text" id="donorAmount" placeholder='{"RUB": 50000}' />
+                        </div>
+                        <button class="btn primary" onclick="addDonor()">✅ Добавить</button>
+                    </div>
+                    <div class="card">
+                        <h3>👥 Список благотворителей</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Наименование</th>
+                                    <th>Email</th>
+                                    <th>Помощь</th>
+                                    <th>Удалить</th>
+                                </tr>
+                            </thead>
+                            <tbody id="donorsTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- АДМИНИСТРАЦИЯ -->
                 <div id="settingsPage" class="hidden">
                     <div class="page-header">
-                        <h1>⚙️ Справочники</h1>
-                        <p>Информация о системе и управление пользователями</p>
+                        <h1>⚙️ Администрирование</h1>
+                        <p>Управление пользователями системы</p>
                     </div>
-                    
                     <div class="card">
-                        <h3>ℹ️ Информация о системе</h3>
-                        <p><strong>Название:</strong> "Благо дарить!" v1.4.0</p>
-                        <p><strong>Организация:</strong> Благо дарить!</p>
-                        <p><strong>Город:</strong> г. Санкт-Петербург</p>
-                        <p><strong>Год:</strong> 2026</p>
-                        <p><strong>Тип:</strong> Профессиональная система управления благотворительностью</p>
-                        <hr style="margin: 20px 0; border: none; border-top: 1px solid #e5e7eb;">
-                        <p><strong>Хранилище:</strong> Firebase Realtime Database</p>
-                        <p><strong>Проект:</strong> blago-a6270</p>
-                        <p><strong>База:</strong> https://blago-a6270-default-rtdb.firebaseio.com</p>
+                        <h3>➕ Добавить пользователя</h3>
+                        <div class="form-group">
+                            <label>Имя пользователя</label>
+                            <input type="text" id="newUsername" placeholder="Имя для входа..." />
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="newEmail" placeholder="email@example.com" />
+                        </div>
+                        <div class="form-group">
+                            <label>Пароль</label>
+                            <input type="password" id="newPassword" placeholder="Минимум 4 символа" />
+                        </div>
+                        <div class="form-group">
+                            <label>Роль</label>
+                            <select id="roleSelect">
+                                <option value="user">👤 Пользователь</option>
+                                <option value="admin">👨‍💼 Администратор</option>
+                            </select>
+                        </div>
+                        <button class="btn primary" onclick="addNewUser()">✅ Добавить</button>
                     </div>
-                    
-                    <div id="adminPanel">
-                        <div class="card">
-                            <h3>👨‍💼 Администратор: Управление пользователями</h3>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                                <div class="form-group">
-                                    <label>Имя пользователя:</label>
-                                    <input type="text" id="newUsername" placeholder="Например: Петров" />
-                                </div>
-                                <div class="form-group">
-                                    <label>Пароль (мин. 4 символа):</label>
-                                    <input type="password" id="newPassword" placeholder="Пароль" />
-                                </div>
-                                <div class="form-group">
-                                    <label>Email:</label>
-                                    <input type="email" id="newEmail" placeholder="email@example.com" />
-                                </div>
-                                <div class="form-group">
-                                    <label>Роль:</label>
-                                    <select id="roleSelect">
-                                        <option value="user">👤 Пользователь</option>
-                                        <option value="admin">👨‍💼 Администратор</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <button class="btn primary" onclick="addNewUser()">✅ ДОБАВИТЬ ПОЛЬЗОВАТЕЛЯ</button>
-                        </div>
-                        
-                        <div class="card">
-                            <h3>👥 Список пользователей</h3>
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Имя</th>
-                                        <th>Email</th>
-                                        <th>Роль</th>
-                                        <th>Статус</th>
-                                        <th>Действие</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="usersTable">
-                                    <tr><td colspan="5" style="text-align: center; color: #999;">Загрузка...</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="card">
+                        <h3>👥 Список пользователей</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Имя</th>
+                                    <th>Email</th>
+                                    <th>Роль</th>
+                                    <th>Статус</th>
+                                    <th>Действие</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTable"></tbody>
+                        </table>
                     </div>
                 </div>
 
@@ -486,13 +397,14 @@
         </div>
     </div>
 
-    <!-- Firebase -->
+    <!-- FIREBASE CDN -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
 
     <script>
+        // ===== FIREBASE CONFIG =====
         const firebaseConfig = {
-            apiKey: "AIzaSyDwQ_gQ_K-s8l-s9H-mQ1k2L3m4N5o6P7q8",
+            apiKey: "AIzaSyB1P2J4kL6mN8oP0qR2sT4uV6wX8yZ0aB1",
             authDomain: "blago-a6270.firebaseapp.com",
             databaseURL: "https://blago-a6270-default-rtdb.firebaseio.com",
             projectId: "blago-a6270",
@@ -504,12 +416,11 @@
         let db = null;
         let currentUser = null;
         let appData = { 
-            income: [], 
-            expense: [], 
-            warehouse: [], 
+            users: {}, 
             donors: {}, 
-            letters: [],
-            press: []
+            activities: [],
+            reportSignatures: [],
+            signatures: []
         };
 
         // ===== ИНИЦИАЛИЗАЦИЯ FIREBASE =====
@@ -519,7 +430,6 @@
             console.log('✅ Firebase инициализирован успешно');
         } catch (err) {
             console.error('❌ Ошибка Firebase:', err);
-            alert('⚠️ Ошибка подключения к Firebase. Перезагрузите страницу.');
         }
 
         // ===== ЗАГРУЗКА ДАННЫХ =====
@@ -538,14 +448,6 @@
                     updateDashboard();
                 } else {
                     console.log('⚠️ БД пуста');
-                    appData = { 
-                        income: [], 
-                        expense: [], 
-                        warehouse: [], 
-                        donors: {}, 
-                        letters: [],
-                        press: []
-                    };
                 }
             }).catch(err => {
                 console.error('❌ Ошибка загрузки:', err);
@@ -553,7 +455,6 @@
             });
         }
 
-        // Загрузка при готовности страницы
         window.addEventListener('load', () => {
             setTimeout(loadAppData, 300);
         });
@@ -625,7 +526,6 @@
         function handleLogout() {
             if (confirm('Вы уверены что хотите выйти?')) {
                 currentUser = null;
-                appData = { income: [], expense: [], warehouse: [], donors: {}, letters: [], press: [] };
                 document.getElementById('loginScreen').style.display = 'flex';
                 document.getElementById('appScreen').style.display = 'none';
                 document.getElementById('username').value = '';
@@ -635,106 +535,177 @@
 
         // ===== ДАШБОРД =====
         function updateDashboard() {
-            const income = (appData.income || []).reduce((sum, i) => sum + (i.amount || 0), 0);
-            const expense = (appData.expense || []).reduce((sum, e) => sum + (e.amount || 0), 0);
-            
-            document.getElementById('statIncome').textContent = income.toLocaleString('ru-RU') + ' ₽';
-            document.getElementById('statExpense').textContent = expense.toLocaleString('ru-RU') + ' ₽';
-            document.getElementById('statBalance').textContent = (income - expense).toLocaleString('ru-RU') + ' ₽';
+            document.getElementById('statUsers').textContent = Object.keys(appData.users || {}).length;
             document.getElementById('statDonors').textContent = Object.keys(appData.donors || {}).length;
+            document.getElementById('statActivities').textContent = (appData.activities || []).length;
+            document.getElementById('statReports').textContent = (appData.reportSignatures || []).length;
         }
 
-        // ===== ФИНАНСЫ =====
-        function addIncome() {
+        // ===== АКТИВНОСТИ =====
+        function addActivity() {
             if (!db) { alert('❌ БД не готова'); return; }
-            const desc = document.getElementById('incomeDesc').value;
-            const amount = parseInt(document.getElementById('incomeAmount').value) || 0;
-            if (!desc || !amount) { alert('Заполните все поля'); return; }
+            const title = document.getElementById('activityTitle').value;
+            const desc = document.getElementById('activityDesc').value;
+            const type = document.getElementById('activityType').value;
+            if (!title || !desc) { alert('Заполните все поля'); return; }
 
-            if (!appData.income) appData.income = [];
-            appData.income.push({ desc, amount, date: new Date().toLocaleDateString('ru-RU') });
-            db.ref('income').set(appData.income);
-            updateFinanceTable();
+            if (!appData.activities) appData.activities = [];
+            appData.activities.push({ 
+                title, 
+                text: desc,
+                type, 
+                date: new Date().toLocaleDateString('ru-RU'),
+                time: new Date().toLocaleTimeString('ru-RU')
+            });
+            
+            db.ref('activities').set(appData.activities);
+            updateActivitiesList();
             updateDashboard();
-            document.getElementById('incomeDesc').value = '';
-            document.getElementById('incomeAmount').value = '';
-            alert('✅ Доход добавлен');
+            document.getElementById('activityTitle').value = '';
+            document.getElementById('activityDesc').value = '';
+            alert('✅ Активность добавлена');
         }
 
-        function addExpense() {
-            if (!db) { alert('❌ БД не готова'); return; }
-            const desc = document.getElementById('expenseDesc').value;
-            const amount = parseInt(document.getElementById('expenseAmount').value) || 0;
-            if (!desc || !amount) { alert('Заполните все поля'); return; }
+        function updateActivitiesList() {
+            let html = '';
+            if (appData.activities && appData.activities.length > 0) {
+                (appData.activities || []).reverse().forEach((a, idx) => {
+                    const emoji = a.type === 'news' ? '📢' : a.type === 'event' ? '🎉' : '📣';
+                    html += `
+                        <div style="border: 1px solid #e5e7eb; padding: 15px; border-radius: 8px; background: #fafafa;">
+                            <h4>${emoji} ${a.title}</h4>
+                            <p style="font-size: 12px; color: #999; margin: 5px 0;">${a.date} ${a.time}</p>
+                            <p style="color: #555; margin: 10px 0 0 0;">${a.text}</p>
+                        </div>
+                    `;
+                });
+            } else {
+                html = '<div style="text-align: center; color: #999; padding: 20px;">Нет активностей</div>';
+            }
+            document.getElementById('activitiesList').innerHTML = html;
+        }
 
-            if (!appData.expense) appData.expense = [];
-            appData.expense.push({ desc, amount, date: new Date().toLocaleDateString('ru-RU') });
-            db.ref('expense').set(appData.expense);
-            updateFinanceTable();
+        // ===== ОТЧЁТЫ =====
+        function addReport() {
+            if (!db) { alert('❌ БД не готова'); return; }
+            const title = document.getElementById('reportTitle').value;
+            const content = document.getElementById('reportContent').value;
+            const period = document.getElementById('reportPeriod').value;
+            if (!title || !content || !period) { alert('Заполните все поля'); return; }
+
+            if (!appData.reportSignatures) appData.reportSignatures = [];
+            appData.reportSignatures.push({ 
+                title, 
+                content, 
+                period,
+                signatures: [],
+                date: new Date().toLocaleDateString('ru-RU')
+            });
+            
+            db.ref('reportSignatures').set(appData.reportSignatures);
+            updateReportsTable();
             updateDashboard();
-            document.getElementById('expenseDesc').value = '';
-            document.getElementById('expenseAmount').value = '';
-            alert('✅ Расход добавлен');
+            document.getElementById('reportTitle').value = '';
+            document.getElementById('reportContent').value = '';
+            document.getElementById('reportPeriod').value = '';
+            alert('✅ Отчёт создан');
         }
 
-        function updateFinanceTable() {
+        function updateReportsTable() {
             let html = '';
-            (appData.income || []).forEach(i => {
-                html += `<tr><td style="color: #059669; font-weight: bold;">📈 ДОХОД</td><td>${i.desc}</td><td style="color: #059669;"><strong>+${i.amount.toLocaleString('ru-RU')} ₽</strong></td><td>${i.date}</td></tr>`;
+            (appData.reportSignatures || []).forEach((r, idx) => {
+                const sigCount = (r.signatures || []).length;
+                html += `<tr>
+                    <td><strong>${r.title}</strong></td>
+                    <td>${r.period}</td>
+                    <td>${sigCount}</td>
+                    <td>${r.date}</td>
+                    <td><button class="btn danger" onclick="deleteReport(${idx})" style="padding: 5px 10px; font-size: 12px;">Удалить</button></td>
+                </tr>`;
             });
-            (appData.expense || []).forEach(e => {
-                html += `<tr><td style="color: #dc2626; font-weight: bold;">📉 РАСХОД</td><td>${e.desc}</td><td style="color: #dc2626;"><strong>-${e.amount.toLocaleString('ru-RU')} ₽</strong></td><td>${e.date}</td></tr>`;
-            });
-            document.getElementById('financeTable').innerHTML = html || '<tr><td colspan="4" style="text-align: center; color: #999;">Нет данных</td></tr>';
+            document.getElementById('reportsTable').innerHTML = html || '<tr><td colspan="5" style="text-align: center; color: #999;">Нет отчётов</td></tr>';
         }
 
-        // ===== СКЛАД =====
-        function addWarehouseItem() {
+        function deleteReport(idx) {
+            if (!confirm('Удалить отчёт?')) return;
             if (!db) { alert('❌ БД не готова'); return; }
-            const name = document.getElementById('warehouseItem').value;
-            const qty = parseInt(document.getElementById('warehouseQty').value) || 0;
-            const loc = document.getElementById('warehouseLocation').value;
-            if (!name || !qty) { alert('Заполните все поля'); return; }
-
-            if (!appData.warehouse) appData.warehouse = [];
-            appData.warehouse.push({ name, qty, location: loc, date: new Date().toLocaleDateString('ru-RU') });
-            db.ref('warehouse').set(appData.warehouse);
-            updateWarehouseTable();
-            document.getElementById('warehouseItem').value = '';
-            document.getElementById('warehouseQty').value = '';
-            alert('✅ Товар добавлен');
+            appData.reportSignatures.splice(idx, 1);
+            db.ref('reportSignatures').set(appData.reportSignatures);
+            updateReportsTable();
+            updateDashboard();
         }
 
-        function updateWarehouseTable() {
-            let html = '';
-            (appData.warehouse || []).forEach(w => {
-                html += `<tr><td><strong>${w.name}</strong></td><td>${w.qty} шт</td><td>${w.location}</td></tr>`;
+        // ===== ПОДПИСИ =====
+        function addSignature() {
+            if (!db) { alert('❌ БД не готова'); return; }
+            const doc = document.getElementById('signDocument').value;
+            const name = document.getElementById('signName').value;
+            const position = document.getElementById('signPosition').value;
+            if (!doc || !name || !position) { alert('Заполните все поля'); return; }
+
+            if (!appData.signatures) appData.signatures = [];
+            appData.signatures.push({ 
+                document: doc,
+                name, 
+                position,
+                date: new Date().toLocaleDateString('ru-RU'),
+                time: new Date().toLocaleTimeString('ru-RU')
             });
-            document.getElementById('warehouseTable').innerHTML = html || '<tr><td colspan="3" style="text-align: center; color: #999;">Нет товаров</td></tr>';
+            
+            db.ref('signatures').set(appData.signatures);
+            updateSignaturesTable();
+            document.getElementById('signDocument').value = '';
+            document.getElementById('signName').value = '';
+            document.getElementById('signPosition').value = '';
+            alert('✅ Подпись добавлена');
         }
 
-        // ===== CRM =====
+        function updateSignaturesTable() {
+            let html = '';
+            (appData.signatures || []).forEach((s, idx) => {
+                html += `<tr>
+                    <td>${s.document}</td>
+                    <td><strong>${s.name}</strong></td>
+                    <td>${s.position}</td>
+                    <td>${s.date}</td>
+                    <td><button class="btn danger" onclick="deleteSignature(${idx})" style="padding: 5px 10px; font-size: 12px;">Удалить</button></td>
+                </tr>`;
+            });
+            document.getElementById('signaturesTable').innerHTML = html || '<tr><td colspan="5" style="text-align: center; color: #999;">Нет подписей</td></tr>';
+        }
+
+        function deleteSignature(idx) {
+            if (!confirm('Удалить подпись?')) return;
+            if (!db) { alert('❌ БД не готова'); return; }
+            appData.signatures.splice(idx, 1);
+            db.ref('signatures').set(appData.signatures);
+            updateSignaturesTable();
+        }
+
+        // ===== БЛАГОТВОРИТЕЛИ =====
         function addDonor() {
             if (!db) { alert('❌ БД не готова'); return; }
             const name = document.getElementById('donorName').value;
             const email = document.getElementById('donorEmail').value;
-            const amount = parseInt(document.getElementById('donorAmount').value) || 0;
+            const amount = document.getElementById('donorAmount').value;
             if (!name || !email || !amount) { alert('Заполните все поля'); return; }
 
             if (!appData.donors) appData.donors = {};
-            const id = Date.now();
-            appData.donors[id] = { 
-                name, 
-                email, 
-                amount, 
-                date: new Date().toLocaleDateString('ru-RU'),
-                rating: amount >= 100000 ? '⭐⭐⭐⭐⭐' : 
-                        amount >= 50000 ? '⭐⭐⭐⭐' : 
-                        amount >= 10000 ? '⭐⭐⭐' : '⭐⭐'
-            };
+            const id = Math.floor(Math.random() * 10000000000000);
+            
+            try {
+                appData.donors[id] = { 
+                    name, 
+                    email, 
+                    amount: JSON.parse(amount)
+                };
+            } catch(e) {
+                alert('❌ Неверный формат JSON. Используйте: {"RUB": 50000}');
+                return;
+            }
             
             db.ref('donors').set(appData.donors);
-            updateCRMTable();
+            updateDonorsTable();
             updateDashboard();
             document.getElementById('donorName').value = '';
             document.getElementById('donorEmail').value = '';
@@ -742,131 +713,31 @@
             alert('✅ Благотворитель добавлен');
         }
 
-        function updateCRMTable() {
+        function updateDonorsTable() {
             let html = '';
             for (let id in (appData.donors || {})) {
                 const d = appData.donors[id];
+                const amountStr = typeof d.amount === 'object' ? JSON.stringify(d.amount) : d.amount;
                 html += `<tr>
                     <td><strong>${d.name}</strong></td>
-                    <td>${d.email}</td>
-                    <td><strong>${d.amount.toLocaleString('ru-RU')} ₽</strong></td>
-                    <td>${d.rating || '⭐⭐'}</td>
+                    <td><a href="mailto:${d.email}">${d.email}</a></td>
+                    <td><code>${amountStr}</code></td>
+                    <td><button class="btn danger" onclick="deleteDonor('${id}')" style="padding: 5px 10px; font-size: 12px;">Удалить</button></td>
                 </tr>`;
             }
-            document.getElementById('crmTable').innerHTML = html || '<tr><td colspan="4" style="text-align: center; color: #999;">Нет данных</td></tr>';
+            document.getElementById('donorsTable').innerHTML = html || '<tr><td colspan="4" style="text-align: center; color: #999;">Нет благотворителей</td></tr>';
         }
 
-        // ===== ПРЕСС-ЦЕНТР (НОВОЕ) =====
-        function addPress() {
+        function deleteDonor(id) {
+            if (!confirm('Удалить благотворителя?')) return;
             if (!db) { alert('❌ БД не готова'); return; }
-            const title = document.getElementById('pressTitle').value;
-            const category = document.getElementById('pressCategory').value;
-            const text = document.getElementById('pressText').value;
-            if (!title || !text) { alert('Заполните все поля'); return; }
-
-            if (!appData.press) appData.press = [];
-            appData.press.push({ 
-                title, 
-                category, 
-                text, 
-                date: new Date().toLocaleDateString('ru-RU'),
-                time: new Date().toLocaleTimeString('ru-RU')
-            });
-            
-            db.ref('press').set(appData.press);
-            updatePressList();
-            document.getElementById('pressTitle').value = '';
-            document.getElementById('pressText').value = '';
-            alert('✅ Публикация добавлена');
+            delete appData.donors[id];
+            db.ref('donors').set(appData.donors);
+            updateDonorsTable();
+            updateDashboard();
         }
 
-        function updatePressList() {
-            let html = '';
-            if (appData.press && appData.press.length > 0) {
-                (appData.press || []).reverse().forEach(p => {
-                    const emoji = p.category === 'Новость' ? '🔔' : 
-                                  p.category === 'Событие' ? '🎉' : 
-                                  p.category === 'Отчет' ? '📊' : '📣';
-                    html += `
-                        <div style="border: 1px solid #e5e7eb; padding: 15px; border-radius: 8px; background: #fafafa;">
-                            <div style="display: flex; justify-content: space-between; align-items: start;">
-                                <div>
-                                    <h4 style="margin: 0 0 5px 0;">${emoji} ${p.title}</h4>
-                                    <p style="font-size: 12px; color: #999; margin: 0;">${p.category} • ${p.date} ${p.time}</p>
-                                </div>
-                            </div>
-                            <p style="margin: 10px 0 0 0; color: #555;">${p.text}</p>
-                        </div>
-                    `;
-                });
-            } else {
-                html = '<div style="text-align: center; color: #999; padding: 20px;">Нет публикаций</div>';
-            }
-            document.getElementById('pressList').innerHTML = html;
-        }
-
-        // ===== ПИСЬМА =====
-        const templates = {
-            formal: 'Уважаемый коллега,\n\nОт имени нашей организации "Благо дарить!" хотим выразить благодарность за Вашу помощь и поддержку.\n\nВ трудных ситуациях люди как вы делают возможным нашу работу. Ваш вклад помогает нам продолжать помогать нуждающимся.\n\nС уважением,\nКоманда "Благо дарить!"\ng. Санкт-Петербург, 2026',
-            short: '🙏 Спасибо за Вашу помощь и поддержку!\n\nВы помните, что люди нуждаются друг в друге? Спасибо, что с нами!\n\n💚 Команда "Благо дарить!"',
-            detailed: 'Дорогой друг!\n\nМы хотим выразить глубокую благодарность за Вашу щедрость и поддержку нашей организации "Благо дарить!".\n\nБлагодаря людям как вы, мы можем помогать тем, кто нуждается в помощи больше всего.\n\nВаш вклад:\n• Помогает нуждающимся семьям\n• Поддерживает волонтерскую работу\n• Создает надежду на лучшее будущее\n\nМы гордимся тем, что работаем вместе с вами ради общего добра.\n\nС искренней благодарностью,\nКоманда "Благо дарить!"\nг. Санкт-Петербург, 2026'
-        };
-
-        function selectTemplate(type) {
-            document.getElementById('letterText').value = templates[type] || '';
-        }
-
-        function printLetter() {
-            const text = document.getElementById('letterText').value;
-            if (!text) { alert('Напишите письмо'); return; }
-            
-            const printWindow = window.open('', '', 'width=800,height=600');
-            printWindow.document.write(`
-                <html><head><title>Письмо</title></head>
-                <body style="font-family: Times New Roman; padding: 40px; line-height: 1.8; white-space: pre-wrap;">
-                    ${text.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
-                </body></html>
-            `);
-            printWindow.document.close();
-            printWindow.focus();
-            setTimeout(() => printWindow.print(), 250);
-        }
-
-        function saveLetter() {
-            if (!db) { alert('❌ БД не готова'); return; }
-            const text = document.getElementById('letterText').value;
-            if (!text) { alert('Напишите письмо'); return; }
-            
-            if (!appData.letters) appData.letters = [];
-            appData.letters.push({ 
-                text, 
-                date: new Date().toLocaleDateString('ru-RU'),
-                time: new Date().toLocaleTimeString('ru-RU')
-            });
-            
-            db.ref('letters').set(appData.letters);
-            updateLettersList();
-            alert('✅ Письмо сохранено');
-        }
-
-        function updateLettersList() {
-            let html = '';
-            if (appData.letters && appData.letters.length > 0) {
-                (appData.letters || []).reverse().forEach((letter, idx) => {
-                    const text = typeof letter === 'object' ? letter.text : letter;
-                    const date = typeof letter === 'object' ? letter.date + ' ' + (letter.time || '') : 'Без даты';
-                    html += `<div style="padding: 15px; margin: 15px 0; border: 1px solid #d1d5db; border-radius: 8px; background: #fafafa;">
-                        <div style="display: flex; justify-content: space-between;"><strong>📄 Письмо #${appData.letters.length - idx}</strong> <span style="color: #999; font-size: 12px;">${date}</span></div>
-                        <p style="margin-top: 10px; color: #555; white-space: pre-wrap;">${text.substring(0, 150)}...</p>
-                    </div>`;
-                });
-            } else {
-                html = '<div style="color: #999; padding: 20px; text-align: center;">Нет сохраненных писем</div>';
-            }
-            document.getElementById('lettersList').innerHTML = html;
-        }
-
-        // ===== АДМИНИСТРАТОР =====
+        // ===== АДМИНИСТРАЦИЯ =====
         async function addNewUser() {
             if (!db) { alert('❌ БД не готова'); return; }
             if (currentUser.role !== 'admin') { alert('❌ Только администратор'); return; }
@@ -896,6 +767,7 @@
 
                 await db.ref('users').set(users);
                 updateUsersList();
+                updateDashboard();
                 
                 document.getElementById('newUsername').value = '';
                 document.getElementById('newPassword').value = '';
@@ -917,6 +789,7 @@
                 delete users[uid];
                 await db.ref('users').set(users);
                 updateUsersList();
+                updateDashboard();
                 alert('✅ Пользователь удален');
             } catch (err) {
                 alert('❌ Ошибка: ' + err.message);
@@ -949,7 +822,7 @@
         // ===== НАВИГАЦИЯ =====
         function showPage(e, page) {
             e.preventDefault();
-            const pages = ['dashboard', 'finance', 'warehouse', 'crm', 'press', 'thanksletter', 'settings'];
+            const pages = ['dashboard', 'activities', 'reports', 'signatures', 'donors', 'settings'];
             pages.forEach(p => {
                 const el = document.getElementById(p + 'Page');
                 if (el) el.classList.add('hidden');
@@ -961,15 +834,13 @@
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
             e.target.closest('.nav-link').classList.add('active');
 
-            if (page === 'finance') updateFinanceTable();
-            if (page === 'warehouse') updateWarehouseTable();
-            if (page === 'crm') updateCRMTable();
-            if (page === 'press') updatePressList();
-            if (page === 'thanksletter') updateLettersList();
+            if (page === 'activities') updateActivitiesList();
+            if (page === 'reports') updateReportsTable();
+            if (page === 'signatures') updateSignaturesTable();
+            if (page === 'donors') updateDonorsTable();
             if (page === 'settings') updateUsersList();
         }
 
-        // Клавиша Logout
         document.addEventListener('keydown', (e) => {
             if (e.key === 'F12' && currentUser) handleLogout();
         });
