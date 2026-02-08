@@ -2,32 +2,42 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Инициализация БД - Благо дарить!</title>
+    <title>Инициализация администратора - Благо дарить!</title>
     <style>
         body { 
             font-family: Arial, sans-serif;
             max-width: 600px;
             margin: 50px auto;
             padding: 20px;
-            background: #f0fdf4;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            min-height: 100vh;
         }
-        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h1 { color: #065f46; }
-        button { padding: 10px 20px; background: #10b981; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+        .container { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+        h1 { color: #065f46; margin-bottom: 10px; }
+        .subtitle { color: #6b7280; margin-bottom: 20px; }
+        button { padding: 12px 24px; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; margin: 5px; font-weight: 600; font-size: 14px; }
         button:hover { background: #059669; }
-        pre { background: #f5f5f5; padding: 10px; border-radius: 4px; overflow-x: auto; }
-        .status { margin: 20px 0; padding: 10px; border-radius: 4px; }
-        .success { background: #c6f6d5; color: #22543d; }
-        .error { background: #fed7d7; color: #c53030; }
+        button.danger { background: #dc2626; }
+        button.danger:hover { background: #b91c1c; }
+        .status { margin: 20px 0; padding: 15px; border-radius: 6px; }
+        .success { background: #c6f6d5; color: #22543d; border: 1px solid #86efac; }
+        .error { background: #fed7d7; color: #c53030; border: 1px solid #fca5a5; }
+        .info { background: #bfdbfe; color: #1e40af; border: 1px solid #93c5fd; }
+        a { color: #10b981; text-decoration: none; }
+        a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🟢 Инициализация БД Благо дарить!</h1>
-        <p>Нажмите кнопку ниже чтобы инициализировать базу данных с пользователями и тестовыми данными.</p>
+        <h1>🟢 ИНИЦИАЛИЗАЦИЯ "Благо дарить!" v1.4.0</h1>
+        <p class="subtitle">Создание учетной записи администратора</p>
         
-        <button onclick="initDatabase()">✅ ИНИЦИАЛИЗИРОВАТЬ БД</button>
-        <button onclick="clearData()">❌ ОЧИСТИТЬ БД</button>
+        <div class="status info">
+            <strong>ℹ️ Инструкция:</strong> Нажмите кнопку ниже чтобы создать учетную запись администратора. После этого вы сможете входить в систему и добавлять других пользователей.
+        </div>
+        
+        <button onclick="initOnlyAdmin()">✅ СОЗДАТЬ АДМИНИСТРАТОРА</button>
+        <button class="danger" onclick="clearData()">🗑️ ОЧИСТИТЬ БД</button>
         
         <div id="status"></div>
     </div>
@@ -55,79 +65,52 @@
             statusDiv.innerHTML = `<div class="status ${type}">${msg}</div>`;
         }
 
-        async function initDatabase() {
-            showStatus('⏳ Инициализация базы данных...', 'success');
+        async function initOnlyAdmin() {
+            showStatus('⏳ Создание администратора...', 'info');
             
             try {
-                // 1. Создаем пользователей
-                const users = {
+                // Проверяем, есть ли уже пользователи
+                const usersSnap = await db.ref('users').once('value');
+                const existingUsers = usersSnap.val();
+
+                if (existingUsers && Object.keys(existingUsers).length > 0) {
+                    showStatus('⚠️ Администратор уже создан! Пользователи уже существуют в системе.', 'error');
+                    const users = existingUsers;
+                    let userList = '<strong>Текущие пользователи:</strong><br>';
+                    for (let uid in users) {
+                        userList += `• ${users[uid].name} (${users[uid].role})<br>`;
+                    }
+                    showStatus(userList, 'info');
+                    return;
+                }
+
+                // Создаем только администратора
+                const admin = {
                     '1769519370597': {
                         id: 1769519370597,
-                        name: 'Никитин Иван Андреевич',
+                        name: 'Никитин',
                         email: 'admin@blago.ru',
                         password: '1166',
                         role: 'admin',
-                        active: true
-                    },
-                    '1234567890': {
-                        id: 1234567890,
-                        name: 'Александр Петров',
-                        email: 'user@blago.ru',
-                        password: '1234',
-                        role: 'user',
-                        active: true
+                        active: true,
+                        createdDate: new Date().toLocaleDateString('ru-RU')
                     }
                 };
 
-                await db.ref('users').set(users);
-                console.log('✅ Пользователи добавлены');
-
-                // 2. Добавляем тестовые данные
-                const testData = {
-                    income: [
-                        { desc: 'Благотворительный взнос', amount: 50000, date: '08.02.2026' },
-                        { desc: 'Пожертвование компании', amount: 100000, date: '07.02.2026' }
-                    ],
-                    expense: [
-                        { desc: 'Закупка товаров', amount: 30000, date: '06.02.2026' },
-                        { desc: 'Зарплата волонтерам', amount: 20000, date: '05.02.2026' }
-                    ],
-                    warehouse: [
-                        { item: 'Продукты', qty: 100, location: 'Склад Софийская ул.' },
-                        { item: 'Одежда', qty: 50, location: 'Склад Песочный' },
-                        { item: 'Лекарства', qty: 200, location: 'Склад Софийская ул.' }
-                    ],
-                    donors: {
-                        '1': { name: 'Борис Иванов', email: 'boris@example.com', amount: 50000, date: '01.02.2026' },
-                        '2': { name: 'ООО Альфа', email: 'info@alfa.ru', amount: 150000, date: '03.02.2026' },
-                        '3': { name: 'Мария Сидорова', email: 'maria@example.com', amount: 10000, date: '04.02.2026' }
-                    },
-                    letters: [
-                        'Уважаемый [ФИО], спасибо за вашу помощь!',
-                        'Благодарим вас за поддержку нашего проекта'
-                    ]
-                };
-
-                await db.ref('income').set(testData.income);
-                await db.ref('expense').set(testData.expense);
-                await db.ref('warehouse').set(testData.warehouse);
-                await db.ref('donors').set(testData.donors);
-                await db.ref('letters').set(testData.letters);
-
-                console.log('✅ Тестовые данные добавлены');
-
+                await db.ref('users').set(admin);
+                
                 showStatus(`
-                    ✅ <strong>БД инициализирована успешно!</strong><br><br>
-                    <strong>Пользователи:</strong><br>
-                    • Имя: <strong>Никитин</strong> | Пароль: <strong>1166</strong><br>
-                    • Имя: <strong>Александр</strong> | Пароль: <strong>1234</strong><br><br>
-                    <strong>Добавлены тестовые данные:</strong><br>
-                    • 2 записи доходов (150,000 ₽)<br>
-                    • 2 записи расходов (50,000 ₽)<br>
-                    • 3 товара на складах<br>
-                    • 3 благотворителя<br>
-                    • 2 письма<br><br>
-                    Перейдите на главную страницу: <a href="/blago4/">https://nikignom33103-coder.github.io/blago4/</a>
+                    ✅ <strong>АДМИНИСТРАТОР СОЗДАН!</strong><br><br>
+                    <strong>Учетные данные:</strong><br>
+                    👤 Имя: <strong>Никитин</strong><br>
+                    🔐 Пароль: <strong>1166</strong><br><br>
+                    <strong>Данные хранятся в Firebase:</strong><br>
+                    📍 https://blago-a6270-default-rtdb.firebaseio.com<br><br>
+                    ✅ Готово! Теперь вы можете:<br>
+                    1️⃣ Войти в систему с этими данными<br>
+                    2️⃣ Добавлять новых пользователей через админ-панель<br>
+                    3️⃣ Использовать все 6 модулей системы<br><br>
+                    👉 <a href="/blago4/">Перейти в приложение</a>
                 `, 'success');
 
             } catch (err) {
@@ -137,12 +120,12 @@
         }
 
         async function clearData() {
-            if (!confirm('⚠️ Вы уверены? Все данные будут удалены!')) return;
+            if (!confirm('⚠️ ВНИМАНИЕ! Все данные системы будут безвозвратно удалены! Вы уверены?')) return;
             
-            showStatus('⏳ Очистка базы данных...', 'success');
+            showStatus('⏳ Очистка базы данных...', 'info');
             try {
                 await db.ref().set(null);
-                showStatus('✅ База данных очищена', 'success');
+                showStatus('✅ БД очищена! Все данные удалены.', 'success');
             } catch (err) {
                 showStatus(`❌ Ошибка: ${err.message}`, 'error');
             }
@@ -150,7 +133,7 @@
 
         // Проверяем подключение при загрузке
         window.addEventListener('load', () => {
-            showStatus('✅ Firebase подключена к: blago-a6270', 'success');
+            showStatus('✅ Firebase подключена | Проект: blago-a6270', 'success');
         });
     </script>
 </body>
